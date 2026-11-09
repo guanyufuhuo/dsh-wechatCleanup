@@ -2,6 +2,12 @@
 
 Distribution is **GitHub-only**. Do not publish this package to npm. Users install the repository URL through DSH's **Plugins → Add plugin** flow.
 
+## Requirements for users
+
+- DSH Web/Desktop `0.2.2-rc.1` or another `0.2.x`.
+- Git available on `PATH`; DSH uses pnpm to fetch the repository.
+- No npm account or npm package is involved.
+
 ## Before tagging
 
 1. Update `version` in `package.json` and add a matching `CHANGELOG.md` entry.

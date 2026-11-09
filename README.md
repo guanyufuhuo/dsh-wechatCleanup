@@ -21,7 +21,7 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
 
 ## 安装
 
-需要 DeepSeek Harness Web/Desktop 版本 `0.2.2-rc.1` 或同系列 `0.2.x`。
+需要 DeepSeek Harness Web/Desktop 版本 `0.2.2-rc.1` 或同系列 `0.2.x`，并且系统已安装 **Git**（DSH 从仓库拉取插件时需要）。Windows 可安装 [Git for Windows](https://git-scm.com/download/win)。
 
 本插件**不发布到 npm**，直接从这个 GitHub 仓库安装：
 
@@ -103,6 +103,8 @@ npm pack       # 仅用于检查发布包内容，不发布到 npm
 - Processes everything locally and registers no Agent deletion tool.
 
 ### Install and use
+
+Requirements: DSH Web/Desktop `0.2.2-rc.1` (or another `0.2.x`) and **Git** on the machine, because DSH installs the plugin from the repository.
 
 This plugin is **not published to npm**. Install it directly from GitHub:
 
