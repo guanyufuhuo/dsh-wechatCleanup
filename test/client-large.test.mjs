@@ -107,8 +107,8 @@ test('renders the large-file scan tab with filters and grouped results', async (
   await import('../client.js')
   const plugin = definition.factory(() => React)
   plugin.apply(ctx)
-  const section = registrations.find((entry) => entry.options.name === 'settings.section')
-  const wrapper = section.Component({ close() {} })
+  const section = registrations.find((entry) => entry.options.name === 'main')
+  const wrapper = section.Component({})
   const page = wrapper.type(wrapper.props)
 
   const text = []

@@ -218,7 +218,7 @@ window.__ModuleLoader__.load({
     }
 
     const CSS = `
-      .wfc-root { display:flex; flex-direction:column; gap:16px; max-width:980px; margin:0 auto; padding:2px 2px 40px; color:var(--dsw-alias-label-primary); font-size:13px; }
+      .wfc-root { display:flex; flex-direction:column; gap:16px; max-width:980px; margin:0 auto; padding:20px 20px 40px; color:var(--dsw-alias-label-primary); font-size:13px; }
       .wfc-hero { display:flex; align-items:flex-start; gap:14px; }
       .wfc-mark { width:44px; height:44px; flex:0 0 44px; display:grid; place-items:center; border-radius:13px; color:var(--dsw-alias-brand-primary); background:color-mix(in srgb, var(--dsw-alias-brand-primary) 13%, transparent); border:1px solid color-mix(in srgb, var(--dsw-alias-brand-primary) 22%, transparent); }
       .wfc-hero-main { flex:1; min-width:0; }
@@ -1125,17 +1125,17 @@ window.__ModuleLoader__.load({
           return h(Icon, { size })
         }
 
-        ctx.slots.inject('settings.section', () => ctx.slots.register({
-          name: 'settings.section',
-          id: 'wechat-file-cleaner',
-          order: 45,
-          label: () => t('nav.title'),
+        // The cleanup workspace is a global panel beside Plugins and
+        // Automation tasks, not a Settings section.
+        ctx.slots.inject('main', () => ctx.slots.register({
+          name: 'main',
+          key: 'wechat-file-cleaner',
         }, Section))
 
-        ctx.slots.inject('settings.section.icon', () => ctx.slots.register({
-          name: 'settings.section.icon',
+        ctx.slots.inject('sidebar.panellist', () => ctx.slots.register({
+          name: 'sidebar.panellist',
           id: 'wechat-file-cleaner',
-          order: 45,
+          order: 20,
           label: () => t('nav.title'),
         }, NavIcon))
       },

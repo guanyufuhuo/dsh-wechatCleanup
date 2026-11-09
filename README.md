@@ -16,7 +16,7 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
 - **大文件扫描**：输入 MB 阈值，找出超过阈值的大文件；可用 `mp4, zip, psd` 等后缀名筛选，并按账号分组、全选或清空。
 - **整组清理**：默认每组保留一个建议项，也可以整组全部勾选后一起清理。
 - **强制确认**：扫描只读；清理前生成 5 分钟有效的确认计划，必须勾选同意并再次点击才会移动文件。
-- **可恢复**：文件移动到账号目录下的 `.dsh-wechat-cleaner/trash/<批次>/`，并记录清单；设置页内可按批次恢复。
+- **可恢复**：文件移动到账号目录下的 `.dsh-wechat-cleaner/trash/<批次>/`，并记录清单；插件面板内可按批次恢复。
 - **本地处理**：扫描、哈希和移动都在本机完成，插件不上传文件内容或路径。
 - **中英双语**：界面、插件元数据和图标均已本地化。
 
@@ -35,7 +35,7 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
    ```
 
 4. 完成安装并启用；如果 DSH 提示需要重启，请完全退出应用后重新打开。
-5. 打开 **设置 → 微信文件清理**。
+5. 打开左侧栏的 **微信文件清理**（与 **插件**、**自动化任务** 并列的独立面板）。
 
 插件没有构建步骤，安装后由 DSH 的 bundle 入口加载 Host 与 Client 两半。也可以在 GitHub 页面通过 **Code → Download ZIP** 下载源码。
 
@@ -45,7 +45,7 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
 
 ## 使用
 
-1. 打开设置页，插件会自动扫描一次。
+1. 打开左侧栏的 **微信文件清理**，插件会自动扫描一次。
 2. 用账号筛选器查看分组；默认勾选每组除建议保留项以外的文件。
 3. 需要整组清理时，直接勾选建议保留项即可。
 4. 点击底部的 **清理选中文件**，在确认窗口核对文件名、账号和大小，勾选同意后确认。
@@ -88,7 +88,7 @@ npm pack       # 仅用于检查发布包内容，不发布到 npm
 | `index.js` | Host 入口、同源 JSON API、扫描/确认/清理状态 |
 | `scanner.js` | 账号发现、文件枚举、哈希和相似分组 |
 | `trash.js` | 可恢复回收站、批次清单和恢复 |
-| `client.js` | 设置页 React 界面和确认流程 |
+| `client.js` | 独立面板 React 界面和确认流程 |
 | `cordis.patch.yml` | DSH bundle 行 |
 | `test/` | 发布前测试 |
 
@@ -121,7 +121,7 @@ This plugin is **not published to npm**. Install it directly from GitHub:
    ```
 
 4. Finish installation and enable it, then restart DSH if requested.
-5. Open **Settings → WeChat file cleanup**.
+5. Open **WeChat file cleanup** in the sidebar, beside **Plugins** and **Automation tasks**.
 
 To update a Git-installed bundle, remove it in **Plugins** and install the repository URL again. Quarantine records live outside the plugin package and survive reinstalling.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0 — 2026-11-09
+
+- Move the cleanup workspace out of Settings into its own sidebar panel beside Plugins and Automation tasks.
+- Register the panel in the global `main` panel and add its sidebar icon; no Settings section remains.
+
 ## 1.1.0 — 2026-11-09
 
 - Add a large-file scan tab with a configurable MB threshold.

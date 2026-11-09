@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 
-test('client bundle registers the settings page and icon', async () => {
+test('client bundle registers the global panel and sidebar icon', async () => {
   let definition
   globalThis.window = {
     __ModuleLoader__: { load(value) { definition = value } },
@@ -46,14 +46,16 @@ test('client bundle registers the settings page and icon', async () => {
   assert.deepEqual(plugin.inject, ['slots', 'locale'])
   plugin.apply(ctx)
 
-  const section = registrations.find((entry) => entry.options.name === 'settings.section')
-  const icon = registrations.find((entry) => entry.options.name === 'settings.section.icon')
+  const section = registrations.find((entry) => entry.options.name === 'main')
+  const icon = registrations.find((entry) => entry.options.name === 'sidebar.panellist')
   assert.ok(section)
   assert.ok(icon)
-  assert.equal(section.options.id, 'wechat-file-cleaner')
-  assert.equal(typeof section.options.label(), 'string')
+  assert.equal(section.options.key, 'wechat-file-cleaner')
+  assert.equal(icon.options.id, 'wechat-file-cleaner')
+  assert.equal(typeof icon.options.label(), 'string')
+  assert.ok(!registrations.some((entry) => entry.options.name === 'settings.section'))
 
-  const wrapper = section.Component({ close() {} })
+  const wrapper = section.Component({})
   const page = wrapper.type(wrapper.props)
   assert.equal(page.type, 'div')
 
