@@ -51,9 +51,6 @@
   "bugs": {
     "url": "https://github.com/guanyufuhuo/dsh-wechatCleanup/issues"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "test": "node --test \"test/*.test.mjs\""
   },

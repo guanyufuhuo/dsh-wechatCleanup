@@ -1,100 +1,68 @@
 # Release checklist
 
-The plugin is packed as a plain ESM bundle: no build step, no runtime dependencies, no install scripts. Tests cover scanning, the HTTP confirmation flow, quarantine restore, the manifest, and Client registration.
+Distribution is **GitHub-only**. Do not publish this package to npm. Users install the repository URL through DSH's **Plugins → Add plugin** flow.
 
-## Before the first publish
+## Before tagging
 
-1. The public repository is configured as <https://github.com/guanyufuhuo/dsh-wechatCleanup>. Confirm the repository is reachable and contains this package at its root.
-2. Confirm the package name `dsh-wechat-file-cleaner` is still available on npm.
-3. Run:
+1. Update `version` in `package.json` and add a matching `CHANGELOG.md` entry.
+2. Run the test suite:
 
    ```bash
    npm test
-   npm pack --dry-run
-   npm pack
    ```
 
-4. Inspect the tarball: it must contain `index.js`, `client.js`, `scanner.js`, `trash.js`, `cordis.patch.yml`, `locale/*.json`, `icon.svg`, `README.md`, `CHANGELOG.md`, and `LICENSE`, and must not contain personal paths, test fixtures, or the test directory.
-5. Install the tarball into a clean DSH profile and verify:
-   - the settings page appears;
-   - scan finds the expected accounts;
-   - a selected plan requires the consent checkbox;
-   - cleanup moves files and the trash batch restores them;
-   - both light and dark themes render correctly.
+3. Optionally inspect what an offline package archive would contain (this does not publish anything):
 
-## Publish to npm
+   ```bash
+   npm pack --dry-run
+   ```
 
-The package is configured with `publishConfig.access: public` and `engines.dsh: >=0.2.2-rc.1 <0.3.0-0`. Update the range when the supported DSH series changes.
+4. Confirm `package.json` still declares the correct repository, `engines.dsh`, bundle patch, and Client export.
+
+## Commit, tag and push
 
 ```bash
-npm login
-npm publish
+git add -A
+git commit -m "release: vX.Y.Z"
+git tag -a vX.Y.Z -m "vX.Y.Z"
+git push origin main
+git push origin vX.Y.Z
 ```
 
-The repository includes GitHub Actions:
+The repository is <https://github.com/guanyufuhuo/dsh-wechatCleanup>.
 
-- `.github/workflows/ci.yml` runs the test suite on pushes and pull requests.
-- `.github/workflows/publish.yml` publishes on a GitHub release or manual dispatch. Add an `NPM_TOKEN` repository secret with an npm automation token; the workflow also requests OIDC provenance (`id-token: write`).
+## GitHub release
 
-## Submit to the Open Plugin Market
+Create a GitHub Release from the pushed tag and include the user-facing notes from `CHANGELOG.md`.
 
-The market at <https://dshopen.org/index.json> lists plugins by npm version and repository. Prepare:
+Attach the source archive generated from the tagged commit:
 
-- npm package name: `dsh-wechat-file-cleaner`
-- suggested category: `tools`
-- keywords: `dsh`, `dsh-plugin`, `deepseek-harness`, `wechat`, `cleanup`, `duplicates`
-- title: `WeChat file cleanup` / `微信文件清理`
-- short description:
-  - en: `Review duplicate and version-similar files per WeChat account and clean them into a restorable quarantine.`
-  - zh: `按微信账号检查重复和版本相似的文件，确认后移入可恢复的清理回收站。`
-- icon: submit `icon.svg` in the index's `icons/` directory and reference it from the entry.
-
-A market entry has the shape below; replace the version with the published value:
-
-```json
-{
-  "name": "dsh-wechat-file-cleaner",
-  "title": {
-    "en": "WeChat file cleanup",
-    "zh": "微信文件清理"
-  },
-  "icon": "icons/<sha256>.svg",
-  "repository": {
-    "url": "https://github.com/guanyufuhuo/dsh-wechatCleanup"
-  },
-  "metadata": {
-    "category": "tools",
-    "keywords": [
-      "dsh",
-      "dsh-plugin",
-      "deepseek-harness",
-      "wechat",
-      "cleanup",
-      "duplicates"
-    ]
-  },
-  "versions": [
-    {
-      "version": "1.0.0",
-      "source": {
-        "type": "npm",
-        "registry": "https://registry.npmjs.org/"
-      },
-      "engines": {
-        "dsh": ">=0.2.2-rc.1 <0.3.0-0"
-      }
-    }
-  ],
-  "description": {
-    "en": "Review duplicate and version-similar files per WeChat account and clean them into a restorable quarantine.",
-    "zh": "按微信账号检查重复和版本相似的文件，确认后移入可恢复的清理回收站。"
-  }
-}
+```bash
+git archive --format=zip -o dsh-wechat-file-cleaner-X.Y.Z-source.zip vX.Y.Z
 ```
 
-## After publishing
+Optionally attach the npm-format tarball produced by `npm pack` for offline inspection. It is an artifact, not a publication; never run `npm publish`.
 
-- Tag the repository release (`v1.0.0`) and attach the tarball.
-- Add the plugin to the market index through its contribution process.
-- Watch issues for WeChat storage-layout changes; account discovery and scan roots are the most platform-sensitive parts.
-- Never ship test fixtures or a real `.dsh-wechat-cleaner` index.
+## How users install
+
+1. Open **Plugins** in DSH.
+2. Choose **Add plugin** or **Install a third-party plugin**.
+3. Enter:
+
+   ```text
+   https://github.com/guanyufuhuo/dsh-wechatCleanup.git
+   ```
+
+4. Enable the bundle and restart DSH if requested.
+
+A Git-installed bundle has no automatic npm update channel. To update, remove it in **Plugins** and install the repository URL again. Quarantine data lives in `~/.dsh-wechat-cleaner/index.json` and the WeChat account folders, so reinstalling the plugin does not delete cleanup history.
+
+## CI
+
+`.github/workflows/ci.yml` runs the tests on pushes and pull requests. There is intentionally no npm publish workflow.
+
+## Security
+
+- Never commit a GitHub token, npm token, WeChat data, or a real `.dsh-wechat-cleaner` index.
+- Test fixtures live only in temporary directories and are removed by the tests.
+- The plugin exposes no Agent deletion tool; the confirmation check is enforced by the Host.

@@ -18,7 +18,7 @@ test('package manifest is publishable and complete', async () => {
   assert.equal(manifest.license, 'MIT')
   assert.equal(manifest.repository.url, 'git+https://github.com/guanyufuhuo/dsh-wechatCleanup.git')
   assert.equal(manifest.homepage, 'https://github.com/guanyufuhuo/dsh-wechatCleanup#readme')
-  assert.equal(manifest.publishConfig.access, 'public')
+  assert.equal(manifest.publishConfig, undefined)
   assert.equal(manifest.dsh.bundle.patch, './cordis.patch.yml')
   assert.equal(manifest.dsh.manifestVersion, 1)
   assert.equal(manifest.dsh.client.platform, 'web')
@@ -59,4 +59,12 @@ test('release documents exist', async () => {
     const content = await read(file)
     assert.ok(content.trim().length > 50)
   }
+})
+
+test('distribution is GitHub-only', async () => {
+  const readme = await read('README.md')
+  assert.ok(readme.includes('https://github.com/guanyufuhuo/dsh-wechatCleanup.git'))
+  assert.ok(readme.includes('不发布到 npm'))
+  assert.ok(!readme.includes('npm install dsh-wechat-file-cleaner'))
+  await assert.rejects(fsp.access(path.join(root, '.github/workflows/publish.yml')))
 })

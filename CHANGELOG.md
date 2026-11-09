@@ -10,3 +10,4 @@
 - Move approved files into a restorable quarantine and support batch restore.
 - Chinese and English UI, localized plugin metadata, and an original icon.
 - Local-only processing: no file contents or paths leave the machine.
+- Distributed directly from GitHub; this project is not published to npm.

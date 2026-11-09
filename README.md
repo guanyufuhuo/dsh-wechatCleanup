@@ -23,17 +23,24 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
 
 需要 DeepSeek Harness Web/Desktop 版本 `0.2.2-rc.1` 或同系列 `0.2.x`。
 
-1. 在 DSH 的插件管理器或插件市场中安装 `dsh-wechat-file-cleaner`。
-2. 如果 DSH 提示需要重启，请完全退出应用后重新打开。
-3. 打开 **设置 → 微信文件清理**。
+本插件**不发布到 npm**，直接从这个 GitHub 仓库安装：
 
-也可以直接安装 npm 包：
+1. 打开 DSH 左侧栏的 **插件（Plugins）** 页面。
+2. 点击 **添加插件（Add plugin）**，或展开箭头选择 **安装第三方插件（Install a third-party plugin）**。
+3. 在安装框中填入仓库地址：
 
-```bash
-npm install dsh-wechat-file-cleaner
-```
+   ```text
+   https://github.com/guanyufuhuo/dsh-wechatCleanup.git
+   ```
 
-插件没有构建步骤，安装后由 DSH 的 bundle 入口加载 Host 与 Client 两半。
+4. 完成安装并启用；如果 DSH 提示需要重启，请完全退出应用后重新打开。
+5. 打开 **设置 → 微信文件清理**。
+
+插件没有构建步骤，安装后由 DSH 的 bundle 入口加载 Host 与 Client 两半。也可以在 GitHub 页面通过 **Code → Download ZIP** 下载源码。
+
+### 更新
+
+从 Git 仓库安装的 bundle 没有 npm 版本更新通道。需要更新时，在 **插件（Plugins）** 中移除旧 bundle，再按上面的步骤重新安装同一仓库地址。清理回收站的数据保存在用户目录和微信账号目录内，卸载/重装插件不会删除这些记录。
 
 ## 使用
 
@@ -66,7 +73,7 @@ npm install dsh-wechat-file-cleaner
 
 ```bash
 npm test       # Node 内置测试：扫描、HTTP 路由、确认/清理/恢复、清单和 Client 注册
-npm pack       # 生成发布用 tarball
+npm pack       # 仅用于检查发布包内容，不发布到 npm
 ```
 
 运行环境：Node.js >= 20。
@@ -82,7 +89,7 @@ npm pack       # 生成发布用 tarball
 | `cordis.patch.yml` | DSH bundle 行 |
 | `test/` | 发布前测试 |
 
-发布到 npm 前请确认 `package.json` 中的名称、版本、`engines.dsh` 和 `publishConfig`，并运行 `npm test` 与 `npm pack` 检查包内容。详见 [RELEASE.md](RELEASE.md)。
+发布通过 GitHub 仓库和 tag 分发，具体步骤见 [RELEASE.md](RELEASE.md)。
 
 ## English
 
@@ -97,7 +104,20 @@ npm pack       # 生成发布用 tarball
 
 ### Install and use
 
-Install `dsh-wechat-file-cleaner` from the DSH plugin manager or marketplace, restart DSH if requested, then open **Settings → WeChat file cleanup**. If no folder is discovered, enter the `xwechat_files`, account, or legacy `WeChat Files` directory manually.
+This plugin is **not published to npm**. Install it directly from GitHub:
+
+1. Open **Plugins** in the DSH sidebar.
+2. Choose **Add plugin** or the arrow → **Install a third-party plugin**.
+3. Enter the repository URL:
+
+   ```text
+   https://github.com/guanyufuhuo/dsh-wechatCleanup.git
+   ```
+
+4. Finish installation and enable it, then restart DSH if requested.
+5. Open **Settings → WeChat file cleanup**.
+
+To update a Git-installed bundle, remove it in **Plugins** and install the repository URL again. Quarantine records live outside the plugin package and survive reinstalling.
 
 ### Safety
 
