@@ -1,0 +1,69 @@
+{
+  "name": "dsh-wechat-file-cleaner",
+  "version": "1.0.0",
+  "description": "Find duplicate and version-similar files in every WeChat account, review them, and move only approved files into a restorable quarantine.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "scanner.js",
+    "trash.js",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "RELEASE.md",
+    "SECURITY.md",
+    "LICENSE",
+    "locale/*.json",
+    "icon.svg",
+    "test/*.test.mjs"
+  ],
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.2-rc.1 <0.3.0-0"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "wechat",
+    "weixin",
+    "cleanup",
+    "deduplicate",
+    "duplicate-files",
+    "storage"
+  ],
+  "license": "MIT",
+  "author": "guanyufuhuo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guanyufuhuo/dsh-wechatCleanup.git"
+  },
+  "homepage": "https://github.com/guanyufuhuo/dsh-wechatCleanup#readme",
+  "bugs": {
+    "url": "https://github.com/guanyufuhuo/dsh-wechatCleanup/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\""
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  }
+}

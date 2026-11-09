@@ -1,0 +1,3 @@
+- insert:
+    - id: wechat-file-cleaner
+      name: 'dsh-wechat-file-cleaner'

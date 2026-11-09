@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="WeChat file cleanup">
+  <defs>
+    <linearGradient id="wfc-green" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#25D366"/>
+      <stop offset="1" stop-color="#079B50"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#0B1F16"/>
+  <path d="M31.8 12.5c-11.8 0-20.9 7.6-20.9 17.2 0 5.3 3 9.9 7.8 13l-1.5 7.4 8.2-4.1c1.9.4 3.9.6 6.1.6 11.7 0 20.8-7.6 20.8-17.1S43.5 12.5 31.8 12.5Z" fill="url(#wfc-green)"/>
+  <path d="M22.2 25.2h18.2M22.2 32.1h11.9" stroke="#F7FFFA" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M47.8 11.6v8.1M43.7 15.6h8.2" stroke="#9EF0C0" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M15.2 47.8c5.8-2.4 11.3-2.2 16.8.8" stroke="#F7FFFA" stroke-width="2.2" stroke-linecap="round" opacity=".55"/>
+</svg>
