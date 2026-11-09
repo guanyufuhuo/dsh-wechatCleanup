@@ -70,6 +70,8 @@ test('client bundle registers the settings page and icon', async () => {
   }
   visit(page)
   assert.ok(text.includes('微信文件清理'))
+  assert.ok(text.includes('重复 / 相似'))
+  assert.ok(text.includes('大文件'))
   assert.ok(text.includes('回收站'))
   assert.ok(text.some((value) => value === '扫描' || value === '重新扫描'))
   assert.ok(!text.some((value) => value.includes('undefined')))

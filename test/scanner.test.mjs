@@ -3,7 +3,7 @@ import { test } from 'node:test'
 import { promises as fsp } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { scanWeChat } from '../scanner.js'
+import { scanLargeFiles, scanWeChat } from '../scanner.js'
 
 const payload = 'A'.repeat(100_000)
 
@@ -62,4 +62,28 @@ test('returns an empty result for a folder without account data', async (t) => {
   assert.equal(result.accounts.length, 0)
   assert.equal(result.groups.length, 0)
   assert.equal(result.totalFiles, 0)
+})
+
+test('finds files above a threshold and filters by extension', async (t) => {
+  const root = await fixture()
+  t.after(() => fsp.rm(root, { recursive: true, force: true }))
+
+  const above95k = await scanLargeFiles({ extraRoot: root, minBytes: 95_000 })
+  assert.equal(above95k.mode, 'large')
+  assert.equal(above95k.totalFiles, 3)
+  assert.equal(above95k.accounts.length, 2)
+  assert.equal(above95k.groups.length, 1)
+  assert.ok(above95k.groups[0].files.every((file) => file.size >= 95_000))
+  assert.ok(above95k.groups[0].files.every((file) => file.suggestedDelete === false))
+  assert.ok(above95k.groups[0].files[0].size >= above95k.groups[0].files[1].size)
+
+  const videos = await scanLargeFiles({ extraRoot: root, minBytes: 50_000, extensions: ['mp4'] })
+  assert.equal(videos.mode, 'large')
+  assert.equal(videos.totalFiles, 2)
+  assert.equal(videos.groups.length, 1)
+  assert.ok(videos.groups[0].files.every((file) => file.name.endsWith('.mp4')))
+
+  const none = await scanLargeFiles({ extraRoot: root, minBytes: 2_000_000 })
+  assert.equal(none.totalFiles, 0)
+  assert.equal(none.groups.length, 0)
 })

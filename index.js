@@ -5,7 +5,7 @@
  */
 import crypto from 'node:crypto'
 import { promises as fsp } from 'node:fs'
-import { scanWeChat } from './scanner.js'
+import { scanLargeFiles, scanWeChat } from './scanner.js'
 import { listTrash, moveToTrash, restoreBatch } from './trash.js'
 
 export const inject = ['webServer']
@@ -57,6 +57,7 @@ function publicScan(scan) {
   return {
     scanId: scan.id,
     createdAt: scan.createdAt,
+    mode: scan.mode,
     roots: scan.roots,
     accounts: scan.accounts,
     groups: scan.groups,
@@ -68,6 +69,9 @@ function publicScan(scan) {
     reclaimableBytes: scan.reclaimableBytes,
     skippedSmall: scan.skippedSmall,
     skippedName: scan.skippedName,
+    skippedFilter: scan.skippedFilter,
+    thresholdBytes: scan.thresholdBytes,
+    extensions: scan.extensions,
     truncated: scan.truncated,
     groupsTruncated: scan.groupsTruncated,
     warnings: scan.warnings,
@@ -78,7 +82,14 @@ function publicScan(scan) {
 async function scanAction(body) {
   prune()
   const extraRoot = typeof body.root === 'string' ? body.root : undefined
-  const result = await scanWeChat({ extraRoot })
+  const mode = body.mode === 'large' ? 'large' : 'duplicates'
+  const result = mode === 'large'
+    ? await scanLargeFiles({
+      extraRoot,
+      minBytes: body.minBytes,
+      extensions: body.extensions,
+    })
+    : await scanWeChat({ extraRoot })
   const id = crypto.randomUUID()
   const fileById = new Map()
   const groupById = new Map()

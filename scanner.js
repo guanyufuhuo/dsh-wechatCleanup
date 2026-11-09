@@ -215,6 +215,41 @@ function isSkippedFile(name) {
   return SKIP_SUFFIXES.some((suffix) => lower.endsWith(suffix))
 }
 
+function normalizeExtensions(input) {
+  const values = Array.isArray(input) ? input : String(input || '').split(/[,\s，;]+/)
+  const result = []
+  for (const value of values) {
+    const ext = String(value).trim().toLowerCase()
+      .replace(/^\*\./, '')
+      .replace(/^\./, '')
+    if (!ext || !/^[a-z0-9][a-z0-9._+-]{0,31}$/.test(ext)) continue
+    if (!result.includes(ext)) result.push(ext)
+    if (result.length >= 50) break
+  }
+  return result
+}
+
+function matchesExtensions(name, extensions) {
+  if (extensions.length === 0) return true
+  const lower = name.toLowerCase()
+  return extensions.some((ext) => lower.endsWith(`.${ext}`))
+}
+
+async function dataDirsFor(account, includeAttachments) {
+  const dataDirs = []
+  if (await isDir(path.join(account.dir, 'msg'))) {
+    dataDirs.push(path.join(account.dir, 'msg', 'file'))
+    dataDirs.push(path.join(account.dir, 'msg', 'video'))
+    if (includeAttachments) dataDirs.push(path.join(account.dir, 'msg', 'attach'))
+  }
+  if (await isDir(path.join(account.dir, 'FileStorage'))) {
+    dataDirs.push(path.join(account.dir, 'FileStorage', 'File'))
+    dataDirs.push(path.join(account.dir, 'FileStorage', 'Video'))
+    dataDirs.push(path.join(account.dir, 'FileStorage', 'Image'))
+  }
+  return dataDirs
+}
+
 async function walkArea(dir, account, state) {
   if (state.truncated) return
   const entries = await readDirSafe(dir, state.warnings)
@@ -238,6 +273,10 @@ async function walkArea(dir, account, state) {
     if (!entry.isFile()) continue
     if (isSkippedFile(entry.name)) {
       state.skippedName += 1
+      continue
+    }
+    if (state.extensions.length > 0 && !matchesExtensions(entry.name, state.extensions)) {
+      state.skippedFilter += 1
       continue
     }
     let stat
@@ -381,6 +420,7 @@ export async function scanWeChat(options = {}) {
 
   if (accounts.length === 0) {
     return {
+      mode: 'duplicates',
       roots: roots.map((root) => ({ path: root.path, source: root.source, accountCount: 0 })),
       accounts: [],
       groups: [],
@@ -392,6 +432,9 @@ export async function scanWeChat(options = {}) {
       reclaimableBytes: 0,
       skippedSmall: 0,
       skippedName: 0,
+      skippedFilter: 0,
+      thresholdBytes: minBytes,
+      extensions: [],
       truncated: false,
       groupsTruncated: false,
       warnings,
@@ -405,20 +448,14 @@ export async function scanWeChat(options = {}) {
   let truncated = false
 
   for (const account of accounts) {
-    const dataDirs = []
-    if (await isDir(path.join(account.dir, 'msg'))) {
-      dataDirs.push(path.join(account.dir, 'msg', 'file'))
-      dataDirs.push(path.join(account.dir, 'msg', 'video'))
-      if (options.includeAttachments) dataDirs.push(path.join(account.dir, 'msg', 'attach'))
-    }
-    if (await isDir(path.join(account.dir, 'FileStorage'))) {
-      dataDirs.push(path.join(account.dir, 'FileStorage', 'File'))
-      dataDirs.push(path.join(account.dir, 'FileStorage', 'Video'))
-      dataDirs.push(path.join(account.dir, 'FileStorage', 'Image'))
-    }
+    const dataDirs = await dataDirsFor(account, options.includeAttachments)
     for (const dataDir of dataDirs) {
       if (!(await isDir(dataDir))) continue
-      const state = { files, warnings, minBytes, maxFiles, skippedSmall, skippedName, truncated, walkDepth: 0 }
+      const state = {
+        files, warnings, minBytes, maxFiles, extensions: [],
+        skippedSmall, skippedName, skippedFilter: 0,
+        truncated, walkDepth: 0,
+      }
       await walkArea(dataDir, account, state)
       skippedSmall = state.skippedSmall
       skippedName = state.skippedName
@@ -540,6 +577,7 @@ export async function scanWeChat(options = {}) {
   const similarGroups = visibleGroups.length - exactGroups
 
   return {
+    mode: 'duplicates',
     roots: roots.map((root) => ({
       path: root.path,
       source: root.source,
@@ -555,8 +593,150 @@ export async function scanWeChat(options = {}) {
     reclaimableBytes: visibleGroups.reduce((sum, group) => sum + group.potentialBytes, 0),
     skippedSmall,
     skippedName,
+    skippedFilter: 0,
+    thresholdBytes: minBytes,
+    extensions: [],
     truncated,
     groupsTruncated,
+    warnings: warnings.slice(0, 20),
+    durationMs: Date.now() - started,
+  }
+}
+
+/**
+ * Find files above a byte threshold, optionally limited to suffix filters.
+ * Results are grouped per WeChat account and sorted largest first.
+ */
+export async function scanLargeFiles(options = {}) {
+  const warnings = []
+  const started = Date.now()
+  const requestedBytes = Number(options.minBytes)
+  const minBytes = Number.isFinite(requestedBytes) && requestedBytes > 0
+    ? Math.floor(requestedBytes)
+    : 100 * 1024 * 1024
+  const extensions = normalizeExtensions(options.extensions)
+  const maxFiles = Number.isFinite(options.maxFiles) ? Math.max(1, options.maxFiles) : MAX_FILES
+  const roots = await discoverRoots(options.extraRoot)
+  const accounts = await discoverAccounts(roots, warnings)
+
+  const empty = {
+    mode: 'large',
+    roots: roots.map((root) => ({ path: root.path, source: root.source, accountCount: 0 })),
+    accounts: [],
+    groups: [],
+    totalFiles: 0,
+    totalBytes: 0,
+    groupCount: 0,
+    exactGroups: 0,
+    similarGroups: 0,
+    reclaimableBytes: 0,
+    skippedSmall: 0,
+    skippedName: 0,
+    skippedFilter: 0,
+    thresholdBytes: minBytes,
+    extensions,
+    truncated: false,
+    groupsTruncated: false,
+    warnings,
+    durationMs: Date.now() - started,
+  }
+  if (accounts.length === 0) return empty
+
+  const files = []
+  let skippedSmall = 0
+  let skippedName = 0
+  let skippedFilter = 0
+  let truncated = false
+
+  for (const account of accounts) {
+    const dataDirs = await dataDirsFor(account, false)
+    for (const dataDir of dataDirs) {
+      if (!(await isDir(dataDir))) continue
+      const state = {
+        files, warnings, minBytes, maxFiles, extensions,
+        skippedSmall, skippedName, skippedFilter,
+        truncated, walkDepth: 0,
+      }
+      await walkArea(dataDir, account, state)
+      skippedSmall = state.skippedSmall
+      skippedName = state.skippedName
+      skippedFilter = state.skippedFilter
+      truncated = state.truncated
+      if (truncated) break
+    }
+    if (truncated) break
+  }
+
+  const uniqueByPath = new Map()
+  for (const file of files) {
+    if (!uniqueByPath.has(file.path.toLowerCase())) uniqueByPath.set(file.path.toLowerCase(), file)
+  }
+  const uniqueFiles = [...uniqueByPath.values()].sort((a, b) => b.size - a.size)
+  const fileByAccount = new Map()
+  for (const file of uniqueFiles) {
+    if (!fileByAccount.has(file.accountId)) fileByAccount.set(file.accountId, [])
+    fileByAccount.get(file.accountId).push(file)
+  }
+
+  const groups = []
+  const accountSummaries = []
+  for (const account of accounts) {
+    const accountFiles = fileByAccount.get(account.id) || []
+    const bytes = accountFiles.reduce((sum, file) => sum + file.size, 0)
+    accountSummaries.push({
+      id: account.id,
+      displayName: account.displayName,
+      folderName: account.folderName,
+      dir: account.dir,
+      fileCount: accountFiles.length,
+      bytes,
+      groupCount: accountFiles.length > 0 ? 1 : 0,
+      reclaimableBytes: 0,
+    })
+    if (accountFiles.length === 0) continue
+    groups.push({
+      id: sha1(`large|${account.id}`).slice(0, 12),
+      kind: 'large',
+      title: account.displayName,
+      extension: '',
+      accountId: account.id,
+      accountName: account.displayName,
+      fileCount: accountFiles.length,
+      size: accountFiles[0].size,
+      potentialBytes: bytes,
+      files: accountFiles.map((file) => ({
+        id: file.id,
+        name: file.name,
+        path: file.path,
+        relativePath: file.relativePath,
+        ext: file.ext,
+        size: file.size,
+        mtimeMs: file.mtimeMs,
+        accountId: file.accountId,
+        accountName: file.accountName,
+        accountDir: file.accountDir,
+        suggestedDelete: false,
+      })),
+    })
+  }
+  groups.sort((a, b) => b.potentialBytes - a.potentialBytes)
+
+  return {
+    ...empty,
+    roots: roots.map((root) => ({
+      path: root.path,
+      source: root.source,
+      accountCount: accounts.filter((account) => account.root === root.path).length,
+    })),
+    accounts: accountSummaries,
+    groups,
+    totalFiles: uniqueFiles.length,
+    totalBytes: uniqueFiles.reduce((sum, file) => sum + file.size, 0),
+    groupCount: groups.length,
+    skippedSmall,
+    skippedName,
+    skippedFilter,
+    truncated,
     warnings: warnings.slice(0, 20),
     durationMs: Date.now() - started,
   }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 — 2026-11-09
+
+- Add a large-file scan tab with a configurable MB threshold.
+- Filter large files by one or more extensions, such as `mp4`, `zip`, or `psd`.
+- Group large-file results per WeChat account, with per-account select-all and clear actions.
+- Reuse the existing explicit confirmation and restorable quarantine flow for large-file cleanup.
+- Add tests for threshold filtering, extension filtering, and large-file cleanup/restore.
+
 ## 1.0.0 — 2026-11-09
 
 - Initial public release.

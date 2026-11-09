@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "WeChat file cleanup",
-    "description": "Find duplicate and version-similar files in each WeChat account and move only the files you approve into a restorable quarantine."
+    "description": "Find duplicate, version-similar, and large files in each WeChat account and move only the files you approve into a restorable quarantine."
   }
 }

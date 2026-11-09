@@ -24,6 +24,33 @@ window.__ModuleLoader__.load({
       'action.restore': '恢复',
       'action.refresh': '刷新',
       'action.scanHere': '扫描此目录',
+      'tab.duplicates': '重复 / 相似',
+      'tab.large': '大文件',
+      'large.title': '大文件扫描',
+      'large.desc': '按大小阈值找出微信账号中的大文件，可再按后缀名筛选。',
+      'large.threshold': '最小大小',
+      'large.unitMB': 'MB',
+      'large.extensions': '后缀名筛选',
+      'large.extensionsPlaceholder': '例如 mp4, zip, psd；留空表示全部',
+      'large.extensionsHint': '多个后缀用逗号或空格分隔，不需要写点。',
+      'large.scan': '扫描大文件',
+      'large.rescan': '重新扫描',
+      'large.scanning': '正在扫描大文件…',
+      'large.scanningDesc': '按阈值遍历微信文件目录，只读，不会修改文件。',
+      'large.thresholdError': '请输入大于 0 的 MB 阈值',
+      'large.errorTitle': '大文件扫描没有完成',
+      'large.noFiles': '没有超过阈值的大文件',
+      'large.noFilesDesc': '尝试降低阈值、清除后缀筛选，或换一个微信目录。',
+      'large.summaryFiles': '大文件数',
+      'large.summarySize': '总大小',
+      'large.summaryMax': '最大文件',
+      'large.meta': '阈值 {size} · 后缀：{ext} · 用时 {ms} 毫秒',
+      'large.allExtensions': '全部',
+      'large.selectAll': '全选',
+      'large.clear': '清空',
+      'large.badge': '大文件',
+      'large.selectedCount': '已选 {count}',
+      'large.skippedFilter': '已按后缀过滤 {count} 个文件。',
       'status.scanning': '正在扫描微信文件…',
       'status.scanningDesc': '正在统计文件并计算重复内容，文件不会离开原位置。',
       'summary.accounts': '微信账号',
@@ -102,6 +129,33 @@ window.__ModuleLoader__.load({
       'action.restore': 'Restore',
       'action.refresh': 'Refresh',
       'action.scanHere': 'Scan this folder',
+      'tab.duplicates': 'Duplicates / similar',
+      'tab.large': 'Large files',
+      'large.title': 'Large-file scan',
+      'large.desc': 'Find files above a size threshold, optionally limited to selected extensions.',
+      'large.threshold': 'Minimum size',
+      'large.unitMB': 'MB',
+      'large.extensions': 'Extension filter',
+      'large.extensionsPlaceholder': 'e.g. mp4, zip, psd; leave empty for all',
+      'large.extensionsHint': 'Separate extensions with commas or spaces; no leading dot needed.',
+      'large.scan': 'Scan large files',
+      'large.rescan': 'Scan again',
+      'large.scanning': 'Scanning large files…',
+      'large.scanningDesc': 'Walking the WeChat folders by the size threshold. Read-only; nothing is changed.',
+      'large.thresholdError': 'Enter a size threshold greater than 0 MB',
+      'large.errorTitle': 'Large-file scan did not finish',
+      'large.noFiles': 'No files above this threshold',
+      'large.noFilesDesc': 'Try a lower threshold, clear the extension filter, or choose another WeChat folder.',
+      'large.summaryFiles': 'Large files',
+      'large.summarySize': 'Total size',
+      'large.summaryMax': 'Largest file',
+      'large.meta': 'Threshold {size} · Extensions: {ext} · Took {ms} ms',
+      'large.allExtensions': 'all',
+      'large.selectAll': 'Select all',
+      'large.clear': 'Clear',
+      'large.badge': 'Large file',
+      'large.selectedCount': '{count} selected',
+      'large.skippedFilter': '{count} files filtered by extension.',
       'status.scanning': 'Scanning WeChat files…',
       'status.scanningDesc': 'Counting files and hashing duplicates. Nothing leaves its current location.',
       'summary.accounts': 'WeChat accounts',
@@ -207,6 +261,25 @@ window.__ModuleLoader__.load({
       .wfc-badge { flex:0 0 auto; border:1px solid var(--dsw-alias-border-l1); border-radius:999px; padding:1px 6px; font-size:10px; line-height:1.55; letter-spacing:.01em; }
       .wfc-badge.exact { color:var(--dsw-alias-state-success-primary); border-color:color-mix(in srgb, var(--dsw-alias-state-success-primary) 40%, var(--dsw-alias-border-l1)); background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 8%, transparent); }
       .wfc-badge.similar { color:var(--dsw-alias-state-warn-primary); border-color:color-mix(in srgb, var(--dsw-alias-state-warn-primary) 40%, var(--dsw-alias-border-l1)); background:color-mix(in srgb, var(--dsw-alias-state-warn-primary) 8%, transparent); }
+      .wfc-badge.large { color:var(--dsw-alias-brand-primary); border-color:color-mix(in srgb, var(--dsw-alias-brand-primary) 40%, var(--dsw-alias-border-l1)); background:color-mix(in srgb, var(--dsw-alias-brand-primary) 8%, transparent); }
+      .wfc-tabs { display:flex; gap:4px; border-bottom:1px solid var(--dsw-alias-border-l1); }
+      .wfc-tab { appearance:none; border:0; border-bottom:2px solid transparent; background:none; color:var(--dsw-alias-label-secondary); padding:7px 10px 8px; font:inherit; font-size:12.5px; cursor:pointer; }
+      .wfc-tab:hover { color:var(--dsw-alias-label-primary); }
+      .wfc-tab.active { color:var(--dsw-alias-brand-primary); border-bottom-color:var(--dsw-alias-brand-primary); }
+      .wfc-large-form { display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; border:1px solid var(--dsw-alias-border-l1); border-radius:11px; background:var(--dsw-alias-bg-layer-1); padding:12px 13px; }
+      .wfc-large-copy { flex:1 1 230px; min-width:180px; }
+      .wfc-large-title { font-size:13px; font-weight:600; }
+      .wfc-large-desc { margin-top:3px; color:var(--dsw-alias-label-secondary); font-size:11.5px; line-height:1.5; }
+      .wfc-field { display:flex; flex-direction:column; gap:4px; min-width:130px; }
+      .wfc-field-label { color:var(--dsw-alias-label-secondary); font-size:11px; }
+      .wfc-field-row { display:flex; align-items:center; gap:5px; }
+      .wfc-field-unit { color:var(--dsw-alias-label-secondary); font-size:11px; }
+      .wfc-input.compact { width:92px; flex:0 0 auto; }
+      .wfc-field.grow { flex:1 1 220px; }
+      .wfc-field.grow .wfc-input { width:100%; }
+      .wfc-large-form .wfc-btn { flex:0 0 auto; margin-bottom:1px; }
+      .wfc-large-form-hint { flex-basis:100%; color:var(--dsw-alias-label-secondary); font-size:10.5px; line-height:1.5; margin-top:-2px; }
+      .wfc-large-tools { display:flex; align-items:center; gap:10px; }
       .wfc-group-meta { margin-top:3px; color:var(--dsw-alias-label-secondary); font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
       .wfc-group-tools { display:flex; align-items:center; gap:10px; flex:0 0 auto; padding-top:1px; }
       .wfc-selected-count { color:var(--dsw-alias-label-secondary); font-size:11.5px; font-variant-numeric:tabular-nums; }
@@ -413,6 +486,39 @@ window.__ModuleLoader__.load({
         }))
     }
 
+    function LargeGroupCard({ group, t, selected, onToggle, onSelectAll, onClear }) {
+      const selectedCount = group.files.filter((file) => selected.has(file.id)).length
+      return h('section', { className: 'wfc-group wfc-large-group' },
+        h('div', { className: 'wfc-group-head' },
+          h('div', { className: 'wfc-group-main' },
+            h('div', { className: 'wfc-group-titlerow' },
+              h('span', { className: 'wfc-badge large' }, t('large.badge')),
+              h('span', { className: 'wfc-group-title' }, group.accountName)),
+            h('div', { className: 'wfc-group-meta' },
+              `${t('group.files', { count: group.fileCount })} · ${formatBytes(group.potentialBytes)}`)),
+          h('div', { className: 'wfc-large-tools' },
+            h('span', { className: 'wfc-selected-count' }, t('large.selectedCount', { count: selectedCount })),
+            h('button', { type: 'button', className: 'wfc-link', onClick: () => onSelectAll(group) }, t('large.selectAll')),
+            h('button', { type: 'button', className: 'wfc-link', onClick: () => onClear(group) }, t('large.clear')))),
+        group.files.map((file) => {
+          const checked = selected.has(file.id)
+          return h('label', { key: file.id, className: `wfc-file${checked ? ' checked' : ''}` },
+            h('input', {
+              type: 'checkbox',
+              className: 'wfc-check',
+              checked,
+              onChange: () => onToggle(file),
+            }),
+            h('div', { className: 'wfc-file-main' },
+              h('div', { className: 'wfc-file-name' },
+                h('span', { className: 'wfc-file-name-text', title: file.name }, file.name)),
+              h('div', { className: 'wfc-file-path', title: file.path }, file.relativePath || file.path)),
+            h('div', { className: 'wfc-file-side' },
+              h('div', null, formatBytes(file.size)),
+              h('div', null, formatTime(file.mtimeMs))))
+        }))
+    }
+
     function CustomForm({ t, value, onChange, onSubmit, scanning }) {
       return h('form', {
         className: 'wfc-custom-form',
@@ -474,6 +580,13 @@ window.__ModuleLoader__.load({
       const [scanRoot, setScanRoot] = React.useState('')
       const [customRoot, setCustomRoot] = React.useState('')
       const [selected, setSelected] = React.useState(() => new Set())
+      const [mode, setMode] = React.useState('duplicates')
+      const [largeScan, setLargeScan] = React.useState(null)
+      const [largeScanning, setLargeScanning] = React.useState(false)
+      const [largeError, setLargeError] = React.useState('')
+      const [thresholdMB, setThresholdMB] = React.useState('100')
+      const [extensions, setExtensions] = React.useState('')
+      const [largeSelected, setLargeSelected] = React.useState(() => new Set())
       const [accountFilter, setAccountFilter] = React.useState('all')
       const [preparing, setPreparing] = React.useState(false)
       const [plan, setPlan] = React.useState(null)
@@ -530,13 +643,48 @@ window.__ModuleLoader__.load({
         void runScan('')
       }, [runScan])
 
+      const runLargeScan = React.useCallback(async (root) => {
+        const mb = Number.parseFloat(thresholdMB)
+        if (!Number.isFinite(mb) || mb <= 0) {
+          setLargeError(t('large.thresholdError'))
+          return
+        }
+        const requested = typeof root === 'string'
+          ? root.trim()
+          : (scanRoot || customRoot.trim())
+        setMode('large')
+        setLargeScanning(true)
+        setLargeError('')
+        setLargeScan(null)
+        setLargeSelected(new Set())
+        setAccountFilter('all')
+        setScanRoot(requested)
+        try {
+          const body = await callApi('scan', {
+            mode: 'large',
+            minBytes: Math.round(mb * 1024 * 1024),
+            extensions,
+            ...(requested ? { root: requested } : {}),
+          })
+          setLargeScan(body.scan)
+        } catch (error) {
+          setLargeError(error instanceof Error ? error.message : String(error))
+        } finally {
+          setLargeScanning(false)
+        }
+      }, [thresholdMB, extensions, scanRoot, customRoot, t])
+
+      const activeScan = mode === 'large' ? largeScan : scan
+      const activeSelected = mode === 'large' ? largeSelected : selected
+      const activeScanning = mode === 'large' ? largeScanning : scanning
+
       const selectedStat = React.useMemo(() => {
         let count = 0
         let bytes = 0
-        if (scan) {
-          for (const group of scan.groups) {
+        if (activeScan) {
+          for (const group of activeScan.groups) {
             for (const file of group.files) {
-              if (selected.has(file.id)) {
+              if (activeSelected.has(file.id)) {
                 count += 1
                 bytes += file.size
               }
@@ -544,7 +692,7 @@ window.__ModuleLoader__.load({
           }
         }
         return { count, bytes }
-      }, [scan, selected])
+      }, [activeScan, activeSelected])
 
       const visibleGroups = React.useMemo(() => {
         if (!scan) return []
@@ -552,11 +700,36 @@ window.__ModuleLoader__.load({
         return scan.groups.filter((group) => group.accountId === accountFilter)
       }, [scan, accountFilter])
 
+      const visibleLargeGroups = React.useMemo(() => {
+        if (!largeScan) return []
+        if (accountFilter === 'all') return largeScan.groups
+        return largeScan.groups.filter((group) => group.accountId === accountFilter)
+      }, [largeScan, accountFilter])
+
       const toggleFile = (file) => {
         const next = new Set(selected)
         if (next.has(file.id)) next.delete(file.id)
         else next.add(file.id)
         setSelected(next)
+      }
+
+      const toggleLargeFile = (file) => {
+        const next = new Set(largeSelected)
+        if (next.has(file.id)) next.delete(file.id)
+        else next.add(file.id)
+        setLargeSelected(next)
+      }
+
+      const selectAllLarge = (group) => {
+        const next = new Set(largeSelected)
+        for (const file of group.files) next.add(file.id)
+        setLargeSelected(next)
+      }
+
+      const clearLargeGroup = (group) => {
+        const next = new Set(largeSelected)
+        for (const file of group.files) next.delete(file.id)
+        setLargeSelected(next)
       }
 
       const resetGroup = (group) => {
@@ -569,11 +742,11 @@ window.__ModuleLoader__.load({
       }
 
       const startCleanup = async () => {
-        if (!scan || selectedStat.count === 0) return
+        if (!activeScan || selectedStat.count === 0) return
         setPreparing(true)
         setNotice(null)
         try {
-          const body = await callApi('prepare', { scanId: scan.scanId, fileIds: [...selected] })
+          const body = await callApi('prepare', { scanId: activeScan.scanId, fileIds: [...activeSelected] })
           setPlan(body.plan)
           setAcknowledged(false)
           setDialogError('')
@@ -594,7 +767,8 @@ window.__ModuleLoader__.load({
           setConfirmOpen(false)
           setPlan(null)
           setAcknowledged(false)
-          await runScan(scanRoot)
+          if (mode === 'large') await runLargeScan(scanRoot)
+          else await runScan(scanRoot)
           setNotice({ kind: 'success', text: t('notice.cleaned', { count: body.batch?.fileCount ?? 0 }) })
         } catch (error) {
           setDialogError(error instanceof Error ? error.message : String(error))
@@ -626,7 +800,8 @@ window.__ModuleLoader__.load({
           const body = await callApi('trash/restore', { batchId })
           setNotice({ kind: 'success', text: t('notice.restored', { count: body.result?.restored ?? 0 }) })
           await loadTrash()
-          await runScan(scanRoot)
+          if (mode === 'large') await runLargeScan(scanRoot)
+          else await runScan(scanRoot)
         } catch (error) {
           setNotice({ kind: 'error', text: `${t('notice.restoreFailed')}: ${error instanceof Error ? error.message : String(error)}` })
         } finally {
@@ -645,11 +820,70 @@ window.__ModuleLoader__.load({
           h('button', {
             type: 'button',
             className: 'wfc-btn primary',
-            onClick: () => runScan(scanRoot),
-            disabled: scanning,
-          }, scanning ? t('action.scanning') : (scan ? t('action.rescan') : t('action.scan')))))
+            onClick: () => (mode === 'large' ? runLargeScan() : runScan(scanRoot)),
+            disabled: activeScanning,
+          }, activeScanning ? t('action.scanning') : (activeScan ? t('action.rescan') : t('action.scan')))))
 
       const noticeView = notice ? h('div', { className: `wfc-notice ${notice.kind}`, role: 'status' }, notice.text) : null
+
+      const tabs = h('div', { className: 'wfc-tabs', role: 'tablist' },
+        h('button', {
+          type: 'button',
+          role: 'tab',
+          'aria-selected': mode === 'duplicates',
+          className: `wfc-tab${mode === 'duplicates' ? ' active' : ''}`,
+          onClick: () => setMode('duplicates'),
+        }, t('tab.duplicates')),
+        h('button', {
+          type: 'button',
+          role: 'tab',
+          'aria-selected': mode === 'large',
+          className: `wfc-tab${mode === 'large' ? ' active' : ''}`,
+          onClick: () => setMode('large'),
+        }, t('tab.large')))
+
+      const largeForm = h('form', {
+        className: 'wfc-large-form',
+        onSubmit: (event) => { event.preventDefault(); void runLargeScan() },
+      },
+      h('div', { className: 'wfc-large-copy' },
+        h('div', { className: 'wfc-large-title' }, t('large.title')),
+        h('div', { className: 'wfc-large-desc' }, t('large.desc'))),
+      h('label', { className: 'wfc-field' },
+        h('span', { className: 'wfc-field-label' }, t('large.threshold')),
+        h('span', { className: 'wfc-field-row' },
+          h('input', {
+            type: 'number',
+            min: '1',
+            step: 'any',
+            className: 'wfc-input compact',
+            value: thresholdMB,
+            onChange: (event) => setThresholdMB(event.target.value),
+            'aria-label': t('large.threshold'),
+          }),
+          h('span', { className: 'wfc-field-unit' }, t('large.unitMB')))),
+      h('label', { className: 'wfc-field grow' },
+        h('span', { className: 'wfc-field-label' }, t('large.extensions')),
+        h('input', {
+          className: 'wfc-input',
+          value: extensions,
+          onChange: (event) => setExtensions(event.target.value),
+          placeholder: t('large.extensionsPlaceholder'),
+          'aria-label': t('large.extensions'),
+          spellCheck: false,
+        })),
+      h('button', {
+        type: 'submit',
+        className: 'wfc-btn primary',
+        disabled: largeScanning,
+      }, largeScanning ? t('large.scanning') : (largeScan ? t('large.rescan') : t('large.scan'))),
+      h('div', { className: 'wfc-large-form-hint' }, t('large.extensionsHint')))
+
+      const largeScanningView = h('div', { className: 'wfc-scanning' },
+        h('div', { className: 'wfc-spinner', 'aria-hidden': true }),
+        h('div', null,
+          h('div', { style: { fontWeight: 600, marginBottom: 3 } }, t('large.scanning')),
+          h('div', { style: { color: 'var(--dsw-alias-label-secondary)', lineHeight: 1.55 } }, t('large.scanningDesc'))))
 
       const scanningView = h('div', { className: 'wfc-scanning' },
         h('div', { className: 'wfc-spinner', 'aria-hidden': true }),
@@ -665,20 +899,45 @@ window.__ModuleLoader__.load({
         scanning,
       })
 
+      const customFormLarge = h(CustomForm, {
+        t,
+        value: customRoot,
+        onChange: setCustomRoot,
+        onSubmit: () => runLargeScan(customRoot),
+        scanning: largeScanning,
+      })
+
       const errorView = scanError ? h('div', { className: 'wfc-alert' },
         h('div', { className: 'wfc-alert-title' }, t('error.title')),
         h('div', { style: { lineHeight: 1.55 } }, scanError),
         h('div', { className: 'wfc-actions', style: { marginTop: 9 } },
           h('button', { type: 'button', className: 'wfc-btn', onClick: () => runScan(scanRoot) }, t('error.retry')))) : null
 
+      const largeErrorView = largeError ? h('div', { className: 'wfc-alert' },
+        h('div', { className: 'wfc-alert-title' }, t('large.errorTitle')),
+        h('div', { style: { lineHeight: 1.55 } }, largeError),
+        h('div', { className: 'wfc-actions', style: { marginTop: 9 } },
+          h('button', { type: 'button', className: 'wfc-btn', onClick: () => runLargeScan() }, t('error.retry')))) : null
+
       const noRoots = scan && scan.accounts.length === 0
       const noGroups = scan && scan.accounts.length > 0 && scan.groups.length === 0
+      const largeNoRoots = largeScan && largeScan.accounts.length === 0
+      const largeNoGroups = largeScan && largeScan.accounts.length > 0 && largeScan.groups.length === 0
 
       const summary = scan && scan.accounts.length > 0 ? h('div', { className: 'wfc-summary' },
         h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('summary.accounts')), h('div', { className: 'wfc-stat-value' }, scan.accounts.length)),
         h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('summary.files')), h('div', { className: 'wfc-stat-value' }, scan.totalFiles)),
         h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('summary.groups')), h('div', { className: 'wfc-stat-value' }, scan.groupCount)),
         h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('summary.reclaimable')), h('div', { className: 'wfc-stat-value' }, formatBytes(scan.reclaimableBytes)))) : null
+
+      const largestLargeBytes = largeScan
+        ? largeScan.groups.reduce((max, group) => group.files.reduce((inner, file) => Math.max(inner, file.size), max), 0)
+        : 0
+      const largeSummary = largeScan && largeScan.accounts.length > 0 ? h('div', { className: 'wfc-summary' },
+        h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('summary.accounts')), h('div', { className: 'wfc-stat-value' }, largeScan.accounts.length)),
+        h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('large.summaryFiles')), h('div', { className: 'wfc-stat-value' }, largeScan.totalFiles)),
+        h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('large.summarySize')), h('div', { className: 'wfc-stat-value' }, formatBytes(largeScan.totalBytes))),
+        h('div', { className: 'wfc-stat' }, h('div', { className: 'wfc-stat-label' }, t('large.summaryMax')), h('div', { className: 'wfc-stat-value' }, formatBytes(largestLargeBytes)))) : null
 
       const meta = scan ? h('div', null,
         h('div', { className: 'wfc-meta' },
@@ -689,13 +948,25 @@ window.__ModuleLoader__.load({
           scan.warnings && scan.warnings.length > 0 ? h('span', { style: { color: 'var(--dsw-alias-state-warn-primary)' } }, t('error.warnings', { count: scan.warnings.length })) : null),
         h('div', { className: 'wfc-hint' }, t('meta.method'))) : null
 
-      const chips = scan && scan.accounts.length > 0 ? h('div', { className: 'wfc-chips' },
+      const largeMeta = largeScan ? h('div', null,
+        h('div', { className: 'wfc-meta' },
+          h('span', null, t('large.meta', {
+            size: formatBytes(largeScan.thresholdBytes),
+            ext: largeScan.extensions.length > 0 ? largeScan.extensions.join(', ') : t('large.allExtensions'),
+            ms: largeScan.durationMs,
+          })),
+          largeScan.warnings && largeScan.warnings.length > 0 ? h('span', { className: 'wfc-dot' }) : null,
+          largeScan.warnings && largeScan.warnings.length > 0 ? h('span', { style: { color: 'var(--dsw-alias-state-warn-primary)' } }, t('error.warnings', { count: largeScan.warnings.length })) : null),
+        largeScan.skippedFilter > 0 ? h('div', { className: 'wfc-hint' }, t('large.skippedFilter', { count: largeScan.skippedFilter })) : null) : null
+
+      const chipsScan = mode === 'large' ? largeScan : scan
+      const chips = chipsScan && chipsScan.accounts.length > 0 ? h('div', { className: 'wfc-chips' },
         h('button', {
           type: 'button',
           className: `wfc-chip${accountFilter === 'all' ? ' active' : ''}`,
           onClick: () => setAccountFilter('all'),
-        }, t('filter.all'), h('span', { className: 'wfc-chip-count' }, scan.totalFiles)),
-        scan.accounts.map((account) => h('button', {
+        }, t('filter.all'), h('span', { className: 'wfc-chip-count' }, chipsScan.totalFiles)),
+        chipsScan.accounts.map((account) => h('button', {
           key: account.id,
           type: 'button',
           className: `wfc-chip${accountFilter === account.id ? ' active' : ''}`,
@@ -703,11 +974,11 @@ window.__ModuleLoader__.load({
           onClick: () => setAccountFilter(account.id),
         }, account.displayName, h('span', { className: 'wfc-chip-count' }, account.fileCount)))) : null
 
-      const rootsView = scan ? h('details', { className: 'wfc-roots' },
+      const rootsView = chipsScan ? h('details', { className: 'wfc-roots' },
         h('summary', null, t('meta.roots')),
-        scan.roots.length === 0
+        chipsScan.roots.length === 0
           ? h('span', { className: 'wfc-root-line' }, t('roots.none'))
-          : scan.roots.map((root) => h('span', { key: root.path, className: 'wfc-root-line' }, root.path))) : null
+          : chipsScan.roots.map((root) => h('span', { key: root.path, className: 'wfc-root-line' }, root.path))) : null
 
       const emptyNoRoots = noRoots ? h('div', { className: 'wfc-empty' },
         h('div', { className: 'wfc-empty-title' }, t('empty.noRoots.title')),
@@ -715,9 +986,19 @@ window.__ModuleLoader__.load({
         h('div', { style: { width: 'min(620px, 100%)', marginTop: 6 } }, customForm),
         h('p', { className: 'wfc-hint' }, t('custom.hint'))) : null
 
+      const largeEmptyNoRoots = largeNoRoots ? h('div', { className: 'wfc-empty' },
+        h('div', { className: 'wfc-empty-title' }, t('empty.noRoots.title')),
+        h('div', { className: 'wfc-empty-desc' }, t('empty.noRoots.desc')),
+        h('div', { style: { width: 'min(620px, 100%)', marginTop: 6 } }, customFormLarge),
+        h('p', { className: 'wfc-hint' }, t('custom.hint'))) : null
+
       const emptyNoGroups = noGroups ? h('div', { className: 'wfc-empty' },
         h('div', { className: 'wfc-empty-title' }, t('empty.noFiles.title')),
         h('div', { className: 'wfc-empty-desc' }, t('empty.noFiles.desc'))) : null
+
+      const largeEmptyNoGroups = largeNoGroups ? h('div', { className: 'wfc-empty' },
+        h('div', { className: 'wfc-empty-title' }, t('large.noFiles')),
+        h('div', { className: 'wfc-empty-desc' }, t('large.noFilesDesc'))) : null
 
       const groupList = scan && scan.groups.length > 0 ? h('div', { className: 'wfc-groups' },
         visibleGroups.map((group) => h(GroupCard, {
@@ -729,9 +1010,21 @@ window.__ModuleLoader__.load({
           onReset: resetGroup,
         }))) : null
 
-      const truncation = scan && scan.groupsTruncated ? h('div', { className: 'wfc-notice warn' }, t('error.groupsTruncated')) : null
+      const largeGroupList = largeScan && largeScan.groups.length > 0 ? h('div', { className: 'wfc-groups' },
+        visibleLargeGroups.map((group) => h(LargeGroupCard, {
+          key: group.id,
+          group,
+          t,
+          selected: largeSelected,
+          onToggle: toggleLargeFile,
+          onSelectAll: selectAllLarge,
+          onClear: clearLargeGroup,
+        }))) : null
 
-      const footer = scan && scan.groups.length > 0 ? h('div', { className: 'wfc-footer' },
+      const truncation = scan && scan.groupsTruncated ? h('div', { className: 'wfc-notice warn' }, t('error.groupsTruncated')) : null
+      const largeTruncation = largeScan && largeScan.truncated ? h('div', { className: 'wfc-notice warn' }, t('meta.truncated')) : null
+
+      const footer = activeScan && activeScan.groups.length > 0 ? h('div', { className: 'wfc-footer' },
         h('div', { className: 'wfc-footer-info' },
           selectedStat.count > 0
             ? h('span', null, t('status.selected', { count: selectedStat.count, size: formatBytes(selectedStat.bytes) }))
@@ -740,27 +1033,32 @@ window.__ModuleLoader__.load({
           type: 'button',
           className: 'wfc-btn primary',
           onClick: startCleanup,
-          disabled: selectedStat.count === 0 || preparing || scanning,
+          disabled: selectedStat.count === 0 || preparing || activeScanning,
         }, preparing ? t('action.preparing') : t('action.cleanup'))) : null
 
-      const customDetails = scan && scan.accounts.length > 0 ? h('details', { className: 'wfc-custom' },
+      const activeCustomForm = mode === 'large' ? customFormLarge : customForm
+      const customDetails = activeScan && activeScan.accounts.length > 0 ? h('details', { className: 'wfc-custom' },
         h('summary', null, t('custom.summary')),
-        customForm,
+        activeCustomForm,
         h('p', { className: 'wfc-hint' }, t('custom.hint'))) : null
 
       return h('div', { className: 'wfc-root' },
         h('style', null, CSS),
         header,
+        tabs,
         noticeView,
-        scanning ? scanningView : null,
-        errorView,
-        summary,
-        meta,
+        mode === 'large'
+          ? (largeScanning ? largeScanningView : null)
+          : (scanning ? scanningView : null),
+        mode === 'large' ? largeErrorView : errorView,
+        mode === 'large' ? largeForm : null,
+        mode === 'large' ? largeSummary : summary,
+        mode === 'large' ? largeMeta : meta,
         chips,
-        emptyNoRoots,
-        emptyNoGroups,
-        groupList,
-        truncation,
+        mode === 'large' ? largeEmptyNoRoots : emptyNoRoots,
+        mode === 'large' ? largeEmptyNoGroups : emptyNoGroups,
+        mode === 'large' ? largeGroupList : groupList,
+        mode === 'large' ? largeTruncation : truncation,
         customDetails,
         rootsView,
         footer,
@@ -789,7 +1087,7 @@ window.__ModuleLoader__.load({
         plan ? h('div', null,
           h('div', { className: 'wfc-confirm-summary' }, t('confirm.summary', { count: plan.fileCount, size: formatBytes(plan.bytes) })),
           h('div', { className: 'wfc-confirm-list' }, plan.groups.map((group) => h('div', { key: group.id, className: 'wfc-confirm-row' },
-            h('span', { className: 'wfc-confirm-name', title: group.title }, `${group.title} · ${group.accountName}`),
+            h('span', { className: 'wfc-confirm-name', title: group.title }, group.title === group.accountName ? group.title : `${group.title} · ${group.accountName}`),
             h('span', { className: 'wfc-confirm-meta' }, `${group.fileCount} · ${formatBytes(group.bytes)}`)))),
           h('p', { className: 'wfc-warning' }, t('confirm.warning')),
           h('label', { className: 'wfc-checkline' },

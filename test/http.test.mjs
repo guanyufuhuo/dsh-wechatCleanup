@@ -98,3 +98,27 @@ test('supports a whole-group cleanup with explicit consent and restore', async (
   assert.equal(after.body.batches.length, 0)
   for (const file of group.files) await fsp.stat(file.path)
 })
+
+test('scans and cleans files above a size threshold with an extension filter', async () => {
+  const scan = await call('scan', {
+    root,
+    mode: 'large',
+    minBytes: 50_000,
+    extensions: ['docx'],
+  })
+  assert.equal(scan.status, 200, JSON.stringify(scan.body))
+  assert.equal(scan.body.scan.mode, 'large')
+  assert.equal(scan.body.scan.totalFiles, 3)
+  assert.equal(scan.body.scan.groups.length, 1)
+  assert.equal(scan.body.scan.groups[0].kind, 'large')
+  assert.ok(scan.body.scan.groups[0].files.every((file) => file.name.endsWith('.docx')))
+
+  const fileIds = scan.body.scan.groups.flatMap((group) => group.files.map((file) => file.id))
+  const prepared = await call('prepare', { scanId: scan.body.scan.scanId, fileIds })
+  assert.equal(prepared.status, 200, JSON.stringify(prepared.body))
+  const deleted = await call('delete', { planId: prepared.body.plan.planId, acknowledged: true })
+  assert.equal(deleted.status, 200, JSON.stringify(deleted.body))
+  assert.equal(deleted.body.batch.fileCount, 3)
+  const restored = await call('trash/restore', { batchId: deleted.body.batch.id })
+  assert.equal(restored.body.result.restored, 3)
+})
