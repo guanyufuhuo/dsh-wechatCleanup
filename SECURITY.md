@@ -12,7 +12,7 @@ Please include:
 - steps to reproduce, including whether the issue requires a malicious local page or a modified scan result;
 - the impact on files outside the selected WeChat account folders.
 
-The plugin never needs network access, credentials, or an agent tool. A report that a deletion can happen without the confirmation checkbox, that a request can name arbitrary paths, or that a restore overwrites an existing file is considered security-relevant.
+The plugin never needs network access, credentials, or an agent tool. Every API request is admitted by the Host connection service (`ctx.connection.requestRejection()` plus `ctx.connection.admit()`); a custom header or a missing Origin is not authentication. A report that a deletion can happen without the confirmation checkbox, that a request can name arbitrary paths, that an unauthenticated request can reach scan or quarantine, or that a restore overwrites an existing file is considered security-relevant.
 
 ## Supported versions
 

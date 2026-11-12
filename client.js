@@ -392,6 +392,7 @@ window.__ModuleLoader__.load({
     async function callApi(action, payload = {}) {
       const response = await fetch(API, {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
           'content-type': 'application/json',
           'x-wechat-cleaner': '1',

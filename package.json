@@ -1,6 +1,6 @@
 {
   "name": "dsh-wechat-file-cleaner",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Find duplicate, version-similar, and large files in every WeChat account, review them, and move only approved files into a restorable quarantine.",
   "type": "module",
   "main": "index.js",

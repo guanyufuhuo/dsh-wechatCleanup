@@ -58,6 +58,7 @@ Repository: <https://github.com/guanyufuhuo/dsh-wechatCleanup>
 
 - 扫描阶段不创建、不修改、不删除文件。
 - 删除请求只接受服务端扫描快照中的文件 ID，客户端不能提交任意路径。
+- 接口通过 `ctx.connection.requestRejection()` 和 `ctx.connection.admit()` 使用 DSH 当前的宿主登录/连接凭据；`x-wechat-cleaner` 只是请求标记，不承担身份认证。
 - 清理前重新校验文件仍存在且大小未变；任一文件变化会中止整批操作。
 - 移动是整批事务式的：中途失败会回滚已经移动的文件。
 - 插件不注册 Agent 工具，删除不能由模型代替用户确认。
@@ -131,7 +132,7 @@ Switch to the **Large files** tab, enter a minimum size in MB and an optional ex
 
 ### Safety
 
-Scanning is read-only. Deletion uses file IDs from the server-side scan snapshot; paths cannot be injected by the browser. Each plan is re-checked against file size and existence, moves are rolled back on partial failure, and no file is permanently deleted.
+Scanning is read-only. Deletion uses file IDs from the server-side scan snapshot; paths cannot be injected by the browser. The API authenticates every request through the Host's `ctx.connection.requestRejection()` and `ctx.connection.admit()`; the custom `x-wechat-cleaner` header is only a request marker, not authentication. Each plan is re-checked against file size and existence, moves are rolled back on partial failure, and no file is permanently deleted.
 
 ### Limitations
 

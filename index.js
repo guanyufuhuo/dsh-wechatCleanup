@@ -8,7 +8,7 @@ import { promises as fsp } from 'node:fs'
 import { scanLargeFiles, scanWeChat } from './scanner.js'
 import { listTrash, moveToTrash, restoreBatch } from './trash.js'
 
-export const inject = ['webServer']
+export const inject = ['webServer', 'connection']
 
 const API_PATH = '/wechat-file-cleaner/api'
 const SCAN_TTL = 30 * 60 * 1000
@@ -206,23 +206,20 @@ function header(req, name) {
   return Array.isArray(value) ? value[0] : value
 }
 
-function checkRequest(req) {
+function checkRequest(req, connection) {
+  const rejection = connection.requestRejection({ headers: req.headers })
+  if (rejection) {
+    return { status: rejection, message: rejection === 401 ? '需要先登录 DSH' : '拒绝未经认证的请求' }
+  }
   if (header(req, 'x-wechat-cleaner') !== '1') {
-    return '拒绝未经标记的请求'
+    return { status: 403, message: '拒绝未经标记的请求' }
   }
-  const site = header(req, 'sec-fetch-site')
-  if (site && site !== 'same-origin' && site !== 'none') {
-    return '拒绝跨站请求'
-  }
-  const origin = header(req, 'origin')
-  if (origin) {
-    let originHost
-    try {
-      originHost = new URL(origin).host
-    } catch {
-      return '拒绝无效来源'
+  const admission = connection.admit({ headers: req.headers })
+  if ('rejection' in admission) {
+    return {
+      status: admission.rejection,
+      message: admission.rejection === 401 ? '需要先登录 DSH' : '拒绝未经认证的请求',
     }
-    if (!originHost || originHost !== header(req, 'host')) return '拒绝跨站请求'
   }
   return undefined
 }
@@ -255,14 +252,14 @@ async function dispatch(body) {
   }
 }
 
-async function handle(req, res) {
+async function handle(req, res, connection) {
   if (req.method !== 'POST') {
     sendJson(res, 405, fail(405, '只支持 POST 请求'))
     return
   }
-  const rejection = checkRequest(req)
+  const rejection = checkRequest(req, connection)
   if (rejection) {
-    sendJson(res, 403, fail(403, rejection))
+    sendJson(res, rejection.status, fail(rejection.status, rejection.message))
     return
   }
   const contentType = header(req, 'content-type') || ''
@@ -297,7 +294,7 @@ export function apply(ctx) {
     () => ctx.webServer.register({
       kind: 'exact',
       path: API_PATH,
-      handler: (req, res) => handle(req, res).catch((error) => {
+      handler: (req, res) => handle(req, res, ctx.connection).catch((error) => {
         console.error('[wechat-file-cleaner]', error)
         if (!res.headersSent) sendJson(res, 500, fail(500, '清理服务发生内部错误'))
         else res.destroy()

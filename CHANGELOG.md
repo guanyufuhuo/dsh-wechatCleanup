@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 — 2026-11-12
+
+- Authenticate the scan and quarantine endpoints through `ctx.connection.admit()` and `ctx.connection.requestRejection()`.
+- Keep `x-wechat-cleaner` only as a request marker; a custom header or absent Origin is no longer sufficient to reach the file operations.
+- Reject unauthenticated requests with 401 and cross-origin requests with 403.
+- Send the browser's same-origin connection credential with the plugin API request.
+
 ## 1.2.0 — 2026-11-09
 
 - Move the cleanup workspace out of Settings into its own sidebar panel beside Plugins and Automation tasks.

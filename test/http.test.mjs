@@ -26,6 +26,18 @@ apply({
       return () => {}
     },
   },
+  connection: {
+    requestRejection({ headers }) {
+      if (headers.origin && !headers.origin.startsWith('http://127.0.0.1:')) return 403
+      return undefined
+    },
+    admit({ headers }) {
+      const cookie = String(headers.cookie || '')
+      return cookie.split(';').some((part) => part.trim() === 'dsh_test=authenticated')
+        ? { peer: { id: 'test-peer' } }
+        : { rejection: 401 }
+    },
+  },
 })
 assert.equal(route.kind, 'exact')
 assert.equal(typeof route.handler, 'function')
@@ -46,6 +58,7 @@ async function call(action, body = {}, headers = {}) {
       'content-type': 'application/json',
       'x-wechat-cleaner': '1',
       'sec-fetch-site': 'same-origin',
+      cookie: 'dsh_test=authenticated',
       ...headers,
     },
     body: JSON.stringify({ action, ...body }),
@@ -53,13 +66,16 @@ async function call(action, body = {}, headers = {}) {
   return { status: response.status, body: await response.json() }
 }
 
-test('rejects non-POST, unmarked and cross-origin requests', async () => {
+test('rejects non-POST, unmarked, unauthenticated and cross-origin requests', async () => {
   const getResponse = await fetch(endpoint)
   assert.equal(getResponse.status, 405)
   assert.equal(getResponse.headers.get('allow'), 'POST')
 
   const unmarked = await call('scan', {}, { 'x-wechat-cleaner': '0' })
   assert.equal(unmarked.status, 403)
+
+  const unauthenticated = await call('scan', {}, { cookie: '' })
+  assert.equal(unauthenticated.status, 401)
 
   const crossOrigin = await call('scan', {}, { origin: 'https://evil.example' })
   assert.equal(crossOrigin.status, 403)
